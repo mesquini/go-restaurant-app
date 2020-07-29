@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 
 import { TextInputProps } from 'react-native';
 
@@ -8,9 +8,16 @@ interface InputProps extends TextInputProps {
   name?: string;
 }
 
+interface IInputValueRef {
+  value: string;
+}
+
 const SearchInput: React.FC<InputProps> = ({ value = '', ...rest }) => {
   const [isFocused, setIsFocused] = useState(false);
   const [isFilled, setIsFilled] = useState(false);
+
+  const inputElementRef = useRef<any>(null);
+  const inputValueRef = useRef<IInputValueRef>({ value: '' });
 
   const handleInputFocus = useCallback(() => {
     setIsFocused(true);
@@ -31,10 +38,15 @@ const SearchInput: React.FC<InputProps> = ({ value = '', ...rest }) => {
       />
 
       <TextInput
+        ref={inputElementRef}
         placeholderTextColor="#B7B7CC"
         onFocus={handleInputFocus}
+        autoCapitalize="sentences"
         onBlur={handleInputBlur}
         value={value}
+        onChangeText={valueChange => {
+          inputValueRef.current.value = valueChange;
+        }}
         testID="search-input"
         {...rest}
       />
